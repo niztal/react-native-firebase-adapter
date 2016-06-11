@@ -32,6 +32,27 @@ These are the main concepts for creating the adapter for the firebase authentica
   
    
 5. On this class you can see an example for wrapping a firebase auth method, for example signInAnonymously:
+
+   ```java
+   @ReactMethod
+   public void signInAnonymously(final Callback successCallback, final Callback errorCallback) {
+        Activity currentActivity = getCurrentActivity();
+
+        mAuth.signInAnonymously()
+                .addOnCompleteListener(currentActivity, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful())
+                            successCallback.invoke();
+                        else
+                            errorCallback.invoke();
+                    }
+                });
+    } 
+   ```
+   **Pay attention that you must wrap this function with the ReactMethod annotation, this will provide you the ability to call it via the ReactNative JS component**
+6. 
+
 5. 
   
 
