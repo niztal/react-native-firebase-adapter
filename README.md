@@ -1,11 +1,11 @@
 # react-native-firebase-adapter
 
 
-These are the main concepts for creating the adapter for the firebase authentication module (made on Android):
+These were my main concepts for creating the adapter for the firebase authentication module (**on Android**):
 
 1. Install Android SDK on the React Native android app (according to [Firebase documentations](https://firebase.google.com/support/guides/firebase-android#update_your_gradle_dependencies_numbered)).
-2. Now you will need create a new Native Module for the React Native project (according to [Facebook's documentation](https://facebook.github.io/react-native/docs/native-modules-ios.html))
-3. Create a new class that extends ReactContextBaseJavaModule (see attached FirebaseAuthAdapter.java) and set a name for it:
+2. Created a new Native Module for the React Native project (according to [Facebook's documentation](https://facebook.github.io/react-native/docs/native-modules-ios.html))
+3. Created a new class that extends ReactContextBaseJavaModule (see attached FirebaseAuthAdapter.java) and set a name for it:
    
   ```java
       @Override
@@ -14,7 +14,7 @@ These are the main concepts for creating the adapter for the firebase authentica
       }
   ```
 
-4. Introduce a new field which wraps the Firebase Android SDK Auth instance (FirebaseAuth) and initialize in constructor:
+4. Introduced a new field which wraps the Firebase Android SDK Auth instance (FirebaseAuth) and initialize in constructor:
 
    ```java
    
@@ -50,10 +50,25 @@ These are the main concepts for creating the adapter for the firebase authentica
                 });
     } 
    ```
-   **Pay attention that you must wrap this function with the ReactMethod annotation, this will provide you the ability to call it via the ReactNative JS component**
-6. 
+   **Pay attention that it must get wrapped with the ReactMethod annotation, this will provide you the ability to call it via the ReactNative JS component**
+   
+6. So after finishing wrapping all of the auth methods of Firebase, I created a class which implements ReactPackage which will be used mainly to initiate a new adapter so we will be able to register it to our NativeModules (see later).
 
-5. 
+
+   ```java
+   public class FirebaseAuthAdapterReactPackage implements ReactPackage {
+      @Override
+      public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
+      List<NativeModule> modules = new ArrayList<>();
+
+      modules.add(new FirebaseAuthAdapter(reactContext));
+
+      return modules;
+      }
+   }
+   ```
+
+7. 
   
 
   
