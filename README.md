@@ -3,6 +3,8 @@
 
 These were my main concepts for creating the adapter for the firebase authentication module (**on Android**):
 
+## Native Module
+
 1. Install Android SDK on the React Native android app (according to [Firebase documentations](https://firebase.google.com/support/guides/firebase-android#update_your_gradle_dependencies_numbered)).
 2. Created a new Native Module for the React Native project (according to [Facebook's documentation](https://facebook.github.io/react-native/docs/native-modules-ios.html))
 3. Created a new class that extends ReactContextBaseJavaModule (see attached FirebaseAuthAdapter.java) and set a name for it:
@@ -68,10 +70,25 @@ These were my main concepts for creating the adapter for the firebase authentica
    }
    ```
 
-7. 
-  
+7. Register this ReactPackage on the Android's MainActivity getPackages method:
+   
 
+   ```java
+   
+   @Override
+    protected List<ReactPackage> getPackages() {
+        return Arrays.<ReactPackage>asList(
+            new MainReactPackage(),
+                new FirebaseAuthAdapterReactPackage()
+        );
+    }
+   ```
   
+Basically, that's it for the native module, now let's see the ReactMative component side..  
+
+
+## ReactNative component
+
 
 
 
