@@ -84,7 +84,7 @@ These were my main concepts for creating the adapter for the firebase authentica
     }
    ```
   
-Basically, that's it for the native module, now let's see the ReactMative component side..  
+Basically, that's it for the native module, now let's see the ReactNative component side..  
 
 
 ## ReactNative component
