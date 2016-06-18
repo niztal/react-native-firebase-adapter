@@ -129,7 +129,7 @@ Pay attention that you may provide some success/failure callbacks.
             displayName,
             email,
             photoUrl,
-         } = await FirebaseAuth.getCurrentUser(100, 100);
+         } = await FirebaseAuth.getCurrentUser();
       }
       catch(e){
          console.log(e);
