@@ -38,19 +38,10 @@ export default class SignIn extends Component {
     }
     
     onSuccess() {
-        const {email} = this.state;
-        const {password} = this.state;
-        var credential = firebase.auth.EmailAuthProvider.credential(email, password);
-
-
-        firebase.database().ref('users/' + userId).set({
-            username: 'test',
-            email: 'myEmail@test.com'
-        });
   
-        // this.props.navigator.push({
-        //     id: 'message',
-        // });
+        this.props.navigator.push({
+            id: 'message',
+        });
     }
     
     onFailure(message) {

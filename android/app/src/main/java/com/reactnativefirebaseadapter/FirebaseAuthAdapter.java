@@ -121,67 +121,6 @@ public class FirebaseAuthAdapter extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void signInWithFacebook(ReadableArray permissions, final Callback successCallback, final Callback errorCallback) {
-        try {
-
-            if(!FacebookSdk.isInitialized())
-                FacebookSdk.sdkInitialize(this.getReactApplicationContext());
-
-            List<String> permissionsList = new ArrayList<String>();
-            for (int i = 0; i < permissions.size(); i++) {
-                permissionsList.add(permissions.getString(i));
-            }
-
-            LoginManager.getInstance().logInWithReadPermissions(this.getCurrentActivity(), permissionsList);
-
-
-            mCallbackManager = CallbackManager.Factory.create();
-
-            LoginManager.getInstance().registerCallback(mCallbackManager,
-                    new FacebookCallback<LoginResult>() {
-                        @Override
-                        public void onSuccess(LoginResult loginResults) {
-                            if(successCallback != null)
-                                successCallback.invoke();
-                        }
-
-                        @Override
-                        public void onCancel() {
-                        }
-
-                        @Override
-                        public void onError(FacebookException error) {
-                            if(errorCallback != null)
-                                errorCallback.invoke(error.getMessage());
-                        }
-                    });
-        }
-        catch (Exception e){
-            if(errorCallback != null)
-                errorCallback.invoke(e.getMessage());
-        }
-    }
-
-    @ReactMethod
-    public void signInWithCustomToken(String mCustomToken, final Callback successCallback, final Callback errorCallback) {
-        Activity currentActivity = getCurrentActivity();
-
-        mAuth.signInWithCustomToken(mCustomToken)
-                .addOnCompleteListener(currentActivity, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            if (successCallback != null)
-                                successCallback.invoke();
-                        }
-                        else if(errorCallback != null) {
-                            errorCallback.invoke(task.getException().getMessage());
-                        }
-                    }
-                });
-    }
-
-    @ReactMethod
     public void handleFacebookAccessToken(String token, final Callback successCallback, final Callback errorCallback) {
         Activity currentActivity = getCurrentActivity();
 
@@ -197,8 +136,6 @@ public class FirebaseAuthAdapter extends ReactContextBaseJavaModule {
                     }
                 });
     }
-
-
 
     @ReactMethod
     public void signOut() {
