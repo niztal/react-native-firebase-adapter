@@ -88,11 +88,197 @@ Basically, that's it for the native module, now let's see the ReactNative compon
 
 
 ## ReactNative component
+On the JS side we need to import the registered component by using the NativeModules component of react-native.
+   ```javascript
+   const {FirebaseAuth} = NativeModules;
+   ```
+   now you can use its functions, for example signInAnonymously:
+   ```javascript
+   signIn() {
+        FirebaseAuth.signInAnonymously(this.onSuccess.bind(this), this.onFailure.bind(this));
+    }
+   ```
+
+Pay attention that you may provide some success/failure callbacks.
 
 
+## FirebaseAuth API:
+
+1. getCurrentUser(final Promise promise) - This native method, gets a promise and only when resolved the JS component will get the user's details (currently supports : userid, name, email, photoURL).
+   
+   ```javascript
+   async function measureLayout() {
+      try {
+         var {
+            uid,
+            displayName,
+            email,
+            photoUrl,
+         } = await FirebaseAuth.getCurrentUser(100, 100);
+      }
+      catch(e){
+         console.log(e);
+      }
+   ```
+
+2. signInAnonymously(final Callback successCallback, final Callback errorCallback) - This native methods signs in the the current user anonymously. It gets two callbacks, one for success and other for failure:
+   ```javascript
+   signIn() {
+        FirebaseAuth.signInAnonymously(this.onSuccess.bind(this), this.onFailure.bind(this));
+    }
+    
+    onSuccess() {
+        Alert.alert("Pay attention that you will be a guest!")
+        this.props.navigator.push({
+            id: 'message',
+        });
+    }
+    
+    onFailure() {
+        ToastAndroid.show('Login failed!');
+    }
+   ```
+
+3. createUserWithEmailAndPassword(String email, String password, final Callback successCallback, final Callback errorCallback) - This native method signs up a new user with given credentials email/password, it also gets two callbacks, one for success and other for failure:
+   ```javascript
+   signUp(){
+        const {email} = this.state;
+        const {password} = this.state;
+        
+        if(email && password) {
+            
+            var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            if(re.test(email)){
+                FirebaseAuth.createUserWithEmailAndPassword(email, password, this.onSuccess.bind(this), this.onFailure.bind(this));
+            }
+            else{
+                ToastAndroid.show('Invalid email!', ToastAndroid.SHORT);
+            }
+        }
+        else{
+            ToastAndroid.show('Please enter email and password', ToastAndroid.SHORT);
+        }
+    }
+    
+    onSuccess() {
+        this.props.navigator.push({
+            id: 'message',
+        });
+    }
+    
+    onFailure(message) {
+        ToastAndroid.show(message, ToastAndroid.SHORT);
+    }
+   ```
+   
+4. signInWithEmailAndPassword(String email, String password, final Callback successCallback, final Callback errorCallback) - This native method signs in a user with the given credentials email/password, it also gets two callbacks, one for success and other for failure:
+   ```javascript
+   signIn() {
+        const {email} = this.state;
+        const {password} = this.state;
+        
+        if(email && password)
+            FirebaseAuth.signInWithEmailAndPassword(email, password, this.onSuccess.bind(this), this.onFailure.bind(this));
+        else
+            ToastAndroid.show('Please enter email and password', ToastAndroid.SHORT);
+    }
+    
+    onSuccess() {
+  
+        this.props.navigator.push({
+            id: 'message',
+        });
+    }
+    
+    onFailure(message) {
+        ToastAndroid.show(message, ToastAndroid.SHORT);
+    }
+   ```
+5. handleFacebookAccessToken(String token, final Callback successCallback, final Callback errorCallback) - This native method registers a facebook authenticated user to firebase by getting its token and two callbacks, one for success and other for failure:
+It uses another module called react-native-react-native-fbsdk (instructions for installation on this [link's documentations](https://github.com/facebook/react-native-fbsdk)
+
+   ```javascript```
+   const FBSDK = require('react-native-fbsdk');
+   const {
+      LoginButton,
+       AccessToken
+   } = FBSDK;
+   const {FirebaseAuth} = NativeModules;
+
+   export class FacebookLogin extends Component {
+       
+       
+       constructor(props) {
+           super(props);
+       }
+       
+       handleLogin(error, result){
+           if(error)
+               ToastAndroid.show('Login failed!');
+           else{
+               
+               AccessToken.getCurrentAccessToken().then(
+                     (data) => {
+                       FirebaseAuth.handleFacebookAccessToken(data.accessToken.toString(), this.onSuccess.bind(this), this.onFailure.bind(this));
+                     }
+                   );
+               
+           }
+       }
+       
+       onSuccess() {
+           this.props.navigator.push({
+               id: 'message',
+           });
+       }
+       
+       onFailure(message) {
+           ToastAndroid.show(message, ToastAndroid.SHORT);
+       }
+       
+       render() {
+           return ( 
+               
+               <View style={styles.fb}>
+                   <LoginButton
+                       publishPermissions={["publish_actions"]}
+                       onLoginFinished={(error, result) => this.handleLogin(error, result)}
+                       onLogoutFinished={() => this.signout()}/>
+               </View>
+           ); 
+       }
+   }
+
+   ```
+
+6. signOut() - This native method signs out the current user from firebase system.
 
 
+## Firebase Authentication TODO:
 
+1. Support other OAuth providers API (e.g. Twitter, Google, GitHub).
+2. Support custom authentications
+3. Link Multiple Auth Providers
+4. Update a user's profile
+5. Send a password reset email
+6. Delete a user
+7. Re-authenticate a user
 
+## Open Issues
+I started to build another adapter for the Firebase RealTime DB (you can see it under $android\app\src\main\java\com\reactnativefirebaseadapter\FirebaseDBAdapter.java
 
+But sadly it doesn't work since react-native allows us to invoke a callback only once!!!
+So it means that everytime a change made on a data we cannot call our callbacks (I already tried with promises)
+I really wish someone from the firebase team/ the community to solve this issue.
+
+### My comments
+As a web developer who knows React.js pretty well, working with React Native for developing native apps on both Android/iOS is the best options for me and for many other developers all over the world.
+
+Knowing that the new firebase (ver 3.0 ^) is not working with React-Native made me and many others disapponted, especially after the Firebase team [announced](https://firebase.googleblog.com/2015/05/firebase-now-works-with-react-native_40.html) it publicly after the last Google I/O (2016). 
+
+So, I told myself, "well hey.. Firebase Android SDK works in 100% with ReactNative and ReactNative is native, so why can't I make a simple adapter for it???"
+
+Well, first it sounds easy, but it wasn't, actually after working on this for days I can tell honestly it's a workaround, and I think the firebase team should make for us the React-Native community a JS working SDK ( I believe solving the initializeSDK issue with the document/browser/window issue will be better than making these adapters, I believe that if the old firebase JS SDK worked, the new one will work too).
+
+I really hope this problem will get solved, or someone will make this adapters better!
 
