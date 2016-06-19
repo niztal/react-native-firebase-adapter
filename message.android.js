@@ -28,7 +28,7 @@ export default class Message extends Component{
     
     componentWillMount() {
         DeviceEventEmitter.addListener('onDataChange', this.onDataChange.bind(this));
-        FirebaseDB.on('messages', 'value');
+        FirebaseDB.on('messages', 'onDataChange');
     }
 
     /*

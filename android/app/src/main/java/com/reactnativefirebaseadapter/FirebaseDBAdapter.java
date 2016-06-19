@@ -59,7 +59,7 @@ public class FirebaseDBAdapter extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void on(String ref) {
+    public void on(String ref, final String event) {
         try {
             DatabaseReference dbRef = mDatabase.child(ref);
 
@@ -69,7 +69,7 @@ public class FirebaseDBAdapter extends ReactContextBaseJavaModule {
                     if(dataSnapshot.getValue() != null) {
                         WritableMap params = convertToWriteableMap((Map<String, Object>) dataSnapshot.getValue());
                         reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                                    .emit("onDataChange", params);
+                                    .emit(event, params);
                     }
                 }
 
