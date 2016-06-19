@@ -59,7 +59,7 @@ public class FirebaseDBAdapter extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void on(String ref, String event) {
+    public void on(String ref) {
         try {
             DatabaseReference dbRef = mDatabase.child(ref);
 
