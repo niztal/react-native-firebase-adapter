@@ -1,3 +1,18 @@
+You can run this react-native application (made for Android)
+
+by running react-native run android.
+
+Make sure that you have a device usb connected (you won't be able to use the android emulator since google-play-services does not support it).
+
+The application contains proof of concepts for:
+
+1. Firebase Anonymous authentication
+2. Firebase sign-up via email/password credentials
+3. Firebase sign-in via email/password credentials
+4. Firebase sign-in via Facebook authentication
+5. Save message to DB
+
+
 # react-native-firebase-adapter
 
 
@@ -114,7 +129,7 @@ Pay attention that you may provide some success/failure callbacks.
             displayName,
             email,
             photoUrl,
-         } = await FirebaseAuth.getCurrentUser(100, 100);
+         } = await FirebaseAuth.getCurrentUser();
       }
       catch(e){
          console.log(e);
