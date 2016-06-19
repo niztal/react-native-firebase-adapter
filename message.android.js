@@ -9,7 +9,8 @@ import {
   Image,
   TextInput,
   TouchableNativeFeedback,
-  NativeModules
+  NativeModules,
+  DeviceEventEmitter
 } from 'react-native';
 
 import Dimensions from 'Dimensions';
@@ -25,6 +26,11 @@ export default class Message extends Component{
         this.state = {message: ''};
     }
     
+    componentWillMount() {
+        DeviceEventEmitter.addListener('onDataChange', this.onDataChange.bind(this));
+        FirebaseDB.on('messages', 'value');
+    }
+
     /*
     Limitations: You can only set a value via the Firebase adapter by setting an object!
     */
@@ -35,12 +41,18 @@ export default class Message extends Component{
     }
     
     onSuccess() {
-        ToastAndroid.show('message submitted..', ToastAndroid.SHORT);    
+        ToastAndroid.show('message submitted..', ToastAndroid.SHORT);
+    }
+
+    onDataChange(updatedData) {
+        ToastAndroid.show('message updated..', ToastAndroid.SHORT);
+        this.setState({submittedMessage: updatedData.message});
     }
     
     onFailure() {
         ToastAndroid.show('error, please try again..', ToastAndroid.SHORT)
     }
+
     render() {
         return(
             <View style={styles.container}>

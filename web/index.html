@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
+        <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyAQ8U21EqRSoo4lbBKMp5WeRY7xS_rJ1Ns",
+            authDomain: "reactnativefirebaseadapter.firebaseapp.com",
+            databaseURL: "https://reactnativefirebaseadapter.firebaseio.com",
+            storageBucket: "reactnativefirebaseadapter.appspot.com",
+        };
+        firebase.initializeApp(config);
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <h2>Write a new message</h2>
+            <div class="input-group">
+                <input id="msg-input" type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
+            </div>
+            <br/>
+            <button id="submitBtn" type="button" class="btn btn-primary">Submit</button>
+        </div>
+    </body>
+    <script>
+       (function() {
+           firebase.auth().signInAnonymously();
+           console.log('authenticated anonymously');;
+        })();
+       $('#submitBtn').click(function(){
+            var msg = $('#msg-input').val();
+            firebase.database().ref('messages').set({
+                message: msg
+          });
+        console.log('calling firebase');
+        }); 
+    </script>
+</html>

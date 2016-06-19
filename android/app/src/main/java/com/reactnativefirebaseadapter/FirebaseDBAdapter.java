@@ -2,8 +2,6 @@ package com.reactnativefirebaseadapter;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.PromiseImpl;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -61,7 +59,7 @@ public class FirebaseDBAdapter extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void on(String ref, String event, final Promise promise) {
+    public void on(String ref, String event) {
         try {
             DatabaseReference dbRef = mDatabase.child(ref);
 
@@ -69,21 +67,20 @@ public class FirebaseDBAdapter extends ReactContextBaseJavaModule {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if(dataSnapshot.getValue() != null) {
-                        promise.resolve(convertToWriteableMap((Map<String, Object>) dataSnapshot.getValue()));
-//                        successCallback.invoke(convertToWriteableMap((Map<String, Object>) dataSnapshot.getValue()));
+                        WritableMap params = convertToWriteableMap((Map<String, Object>) dataSnapshot.getValue());
+                        reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                                    .emit("onDataChange", params);
                     }
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    promise.reject("" + databaseError.getCode(), databaseError.getMessage());
                 }
             };
 
             dbRef.addValueEventListener(eventListener);
         }
         catch (Exception e){
-            promise.reject(e);
         }
     }
 
