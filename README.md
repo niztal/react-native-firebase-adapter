@@ -279,12 +279,34 @@ It uses another module called react-native-react-native-fbsdk (instructions for 
 6. Delete a user
 7. Re-authenticate a user
 
-## Open Issues
-I started to build another adapter for the Firebase RealTime DB (you can see it under $android\app\src\main\java\com\reactnativefirebaseadapter\FirebaseDBAdapter.java
+##Firebase DB
 
-But sadly it doesn't work since react-native allows us to invoke a callback only once!!!
-So it means that everytime a change made on a data we cannot call our callbacks (I already tried with promises)
-I really wish someone from the firebase team/ the community to solve this issue.
+I've build another adapter for the firebase DB, right now includes basic operations such as write data and call JS function on change of a value:
+
+1. public void setValue(String ref, ReadableMap value, final Callback successCallback, final Callback errorCallback) - sets a new value to the given ref, gets an object (Pay attention: you must move an object to this method - see how in next JS example):
+
+   ```javascript```
+   const {FirebaseDB} = NativeModules;
+   submit() {
+        FirebaseDB.setValue('messages', {
+            message:this.state.message
+        }, this.onSuccess.bind(this), this.onFailure.bind(this));
+    }
+   ```
+   
+2. public void on(String ref, final String event) - this native method takes care to sync the JS module by getting an event an invoke it once the data value changed.
+
+   ```javascript```
+   componentWillMount() {
+        DeviceEventEmitter.addListener('onDataChange', this.onDataChange.bind(this));
+        FirebaseDB.on('messages', 'onDataChange');
+    }
+    
+    onDataChange(updatedData) {
+        ToastAndroid.show('message updated..', ToastAndroid.SHORT);
+        this.setState({submittedMessage: updatedData.message});
+    }
+   ```
 
 ### My comments
 As a web developer who knows React.js pretty well, working with React Native for developing native apps on both Android/iOS is the best options for me and for many other developers all over the world.
