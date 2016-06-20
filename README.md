@@ -307,6 +307,8 @@ I've build another adapter for the firebase DB, right now includes basic operati
         this.setState({submittedMessage: updatedData.message});
     }
    ```
+3. You may open the simple html page I've made ($/web/index.html), submit new message and see the change reflected on the native app.
+
 
 ### My comments
 As a web developer who knows React.js pretty well, working with React Native for developing native apps on both Android/iOS is the best options for me and for many other developers all over the world.
